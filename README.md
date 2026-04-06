@@ -11,8 +11,6 @@
 
 ## 核心区别 | Core Difference
 
-## 核心区别 | Core Difference
-
 | 传统知识库 | ThoughtBank |
 |---|---|
 | 提问 → 检索 → 回答 | 提问 → **编译** → **复用** |
