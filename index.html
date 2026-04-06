@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>知识图谱 - Knowledge Graph</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
+        }
+        header {
+            text-align: center;
+            padding: 30px 20px 10px;
+        }
+        h1 {
+            font-size: 1.8rem;
+            color: #e94560;
+            margin-bottom: 8px;
+        }
+        .subtitle {
+            font-size: 0.9rem;
+            color: #888;
+        }
+        #graph-container {
+            width: 100%;
+            height: calc(100vh - 120px);
+            position: relative;
+        }
+        svg {
+            width: 100%;
+            height: 100%;
+        }
+        .node {
+            cursor: pointer;
+        }
+        .node circle {
+            stroke: #fff;
+            stroke-width: 2px;
+            transition: stroke 0.2s, stroke-width 0.2s, r 0.2s;
+        }
+        .node text {
+            font-size: 12px;
+            fill: #fff;
+            text-anchor: middle;
+            pointer-events: none;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+        }
+        .link {
+            stroke: #4a5568;
+            stroke-opacity: 0.6;
+            stroke-width: 1.5px;
+        }
+        .link:hover {
+            stroke: #e94560;
+            stroke-opacity: 1;
+        }
+        #tooltip {
+            position: fixed;
+            background: rgba(30, 30, 50, 0.95);
+            border: 1px solid #e94560;
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 13px;
+            color: #e0e0e0;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            max-width: 280px;
+            box-shadow: 0 4px 20px rgba(233, 69, 96, 0.3);
+        }
+        #tooltip.visible {
+            opacity: 1;
+        }
+        #tooltip h3 {
+            color: #e94560;
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+        #stats {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(30, 30, 50, 0.9);
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 12px;
+            color: #888;
+        }
+        #stats span {
+            color: #e94560;
+            font-weight: bold;
+        }
+        .legend {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(30, 30, 50, 0.9);
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 11px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+        .legend-item:last-child {
+            margin-bottom: 0;
+        }
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .legend-dot.product { background: #f59e0b; }
+        .legend-dot.entity { background: #ef4444; }
+        .legend-dot.concept { background: #10b981; }
+        .legend-dot.culture { background: #8b5cf6; }
+        .legend-dot.tool { background: #3b82f6; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🧠 知识图谱</h1>
+        <p class="subtitle">点击节点查看详情，双击打开 wiki 页面</p>
+    </header>
+    
+    <div id="graph-container"></div>
+    
+    <div id="tooltip"></div>
+    
+    <div id="stats">
+        节点: <span id="node-count">0</span> | 
+        连接: <span id="link-count">0</span>
+    </div>
+    
+    <div class="legend">
+        <div class="legend-item">
+            <div class="legend-dot product"></div>
+            <span>产品/项目</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-dot concept"></div>
+            <span>概念/方法论</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-dot culture"></div>
+            <span>文化/领域</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-dot tool"></div>
+            <span>工具/资源</span>
+        </div>
+    </div>
+
+    <script>
+        // ========== 知识库数据（从 wiki 解析）==========
+        const nodes = [
+            { id: "PixelMotion AI", type: "product", desc: "AI像素动画生成平台，1积分/分钟，5000+用户。当前核心产品。" },
+            { id: "个人档案", type: "entity", desc: "姚铭楷，93年生，深圳。从工业AI视觉转型为独立开发者。" },
+            { id: "独立开发者", type: "concept", desc: "已离职，全职个人创业。主力全栈开发。" },
+            { id: "SKJ公司", type: "entity", desc: "上上家公司，工业AI视觉质检项目。2023年。" },
+            { id: "历史项目", type: "concept", desc: "过往所有项目沉淀：FancyDraw、AgentTars、SVG Generator等。" },
+            { id: "AI产品经理", type: "concept", desc: "深度介入模型调用、素材管理与自动化。" },
+            { id: "独立游戏开发", type: "culture", desc: "像素艺术是独立游戏的重要视觉资产。" },
+            { id: "二次元文化", type: "culture", desc: "核心用户群体，与独立游戏和像素艺术重合。" },
+            { id: "工具链", type: "tool", desc: "Cursor、VS Code、PixPin、MiniMax等。" },
+            { id: "海外平台销售", type: "concept", desc: "Creem.io Merchant of Record模式。" },
+            { id: "商户运营", type: "concept", desc: "微信支付商户+支付宝海外汇款。" }
+        ];
+
+        const links = [
+            { source: "个人档案", target: "独立开发者" },
+            { source: "个人档案", target: "SKJ公司" },
+            { source: "个人档案", target: "PixelMotion AI" },
+            { source: "个人档案", target: "历史项目" },
+            { source: "独立开发者", target: "PixelMotion AI" },
+            { source: "独立开发者", target: "海外平台销售" },
+            { source: "独立开发者", target: "商户运营" },
+            { source: "SKJ公司", target: "AI产品经理" },
+            { source: "PixelMotion AI", target: "独立游戏开发" },
+            { source: "PixelMotion AI", target: "二次元文化" },
+            { source: "PixelMotion AI", target: "工具链" },
+            { source: "PixelMotion AI", target: "AI产品经理" },
+            { source: "PixelMotion AI", target: "海外平台销售" },
+            { source: "PixelMotion AI", target: "商户运营" },
+            { source: "历史项目", target: "工具链" },
+            { source: "AI产品经理", target: "工具链" },
+            { source: "独立游戏开发", target: "二次元文化" },
+            { source: "海外平台销售", target: "商户运营" }
+        ];
+
+        // ========== 图谱渲染 ==========
+        const container = document.getElementById('graph-container');
+        const width = container.clientWidth;
+        const height = container.clientHeight;
+
+        const svg = d3.select('#graph-container')
+            .append('svg')
+            .attr('viewBox', [0, 0, width, height]);
+
+        // 颜色映射
+        const colorMap = {
+            product: '#f59e0b',  // 橙色
+            entity: '#ef4444',  // 红色
+            concept: '#10b981',  // 绿色
+            culture: '#8b5cf6',  // 紫色
+            tool: '#3b82f6'      // 蓝色
+        };
+
+        // 创建力导向模拟
+        const simulation = d3.forceSimulation(nodes)
+            .force('link', d3.forceLink(links).id(d => d.id).distance(150))
+            .force('charge', d3.forceManyBody().strength(-400))
+            .force('center', d3.forceCenter(width / 2, height / 2))
+            .force('collision', d3.forceCollide().radius(60));
+
+        // 绘制连接线
+        const link = svg.append('g')
+            .selectAll('line')
+            .data(links)
+            .join('line')
+            .attr('class', 'link');
+
+        // 绘制节点组
+        const node = svg.append('g')
+            .selectAll('g')
+            .data(nodes)
+            .join('g')
+            .attr('class', 'node')
+            .call(d3.drag()
+                .on('start', dragstarted)
+                .on('drag', dragged)
+                .on('end', dragended));
+
+        // 节点圆形
+        node.append('circle')
+            .attr('r', 30)
+            .attr('fill', d => colorMap[d.type])
+            .on('mouseover', function(event, d) {
+                d3.select(this)
+                    .transition().duration(200)
+                    .attr('r', 38)
+                    .attr('stroke', '#e94560')
+                    .attr('stroke-width', 3);
+                tooltip.innerHTML = `<h3>${d.id}</h3><p>${d.desc}</p>`;
+                tooltip.classList.add('visible');
+            })
+            .on('mousemove', function(event) {
+                tooltip.style.left = (event.pageX + 15) + 'px';
+                tooltip.style.top = (event.pageY + 15) + 'px';
+            })
+            .on('mouseout', function() {
+                d3.select(this)
+                    .transition().duration(200)
+                    .attr('r', 30)
+                    .attr('stroke', '#fff')
+                    .attr('stroke-width', 2);
+                tooltip.classList.remove('visible');
+            })
+            .on('dblclick', function(event, d) {
+                window.open(`wiki/${encodeURIComponent(d.id)}.md`, '_blank');
+            });
+
+        // 节点文字
+        node.append('text')
+            .attr('dy', '0.35em')
+            .attr('y', 45)
+            .text(d => d.id);
+
+        // Tooltip
+        const tooltip = document.getElementById('tooltip');
+
+        // 模拟更新
+        simulation.on('tick', () => {
+            link
+                .attr('x1', d => d.source.x)
+                .attr('y1', d => d.source.y)
+                .attr('x2', d => d.target.x)
+                .attr('y2', d => d.target.y);
+
+            node.attr('transform', d => `translate(${d.x},${d.y})`);
+        });
+
+        // 拖拽事件
+        function dragstarted(event, d) {
+            if (!event.active) simulation.alphaTarget(0.3).restart();
+            d.fx = d.x;
+            d.fy = d.y;
+        }
+
+        function dragged(event, d) {
+            d.fx = event.x;
+            d.fy = event.y;
+        }
+
+        function dragended(event, d) {
+            if (!event.active) simulation.alphaTarget(0);
+            d.fx = null;
+            d.fy = null;
+        }
+
+        // 更新统计
+        document.getElementById('node-count').textContent = nodes.length;
+        document.getElementById('link-count').textContent = links.length;
+
+        // 响应窗口大小变化
+        window.addEventListener('resize', () => {
+            const newWidth = container.clientWidth;
+            const newHeight = container.clientHeight;
+            svg.attr('viewBox', [0, 0, newWidth, newHeight]);
+            simulation.force('center', d3.forceCenter(newWidth / 2, newHeight / 2));
+            simulation.alpha(0.3).restart();
+        });
+    </script>
+</body>
+</html>
