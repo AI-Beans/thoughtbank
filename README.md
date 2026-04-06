@@ -9,12 +9,6 @@
 
 ---
 
-**About**
-
-ThoughtBank is an AI-powered personal knowledge base built on Karpathy's LLM Wiki concept. Instead of rediscovering knowledge on every query, it compiles insights into a persistent middle layer that grows over time. LLM handles all the bookkeeping — structuring, cross-referencing, and maintenance — while you focus on what matters: asking the right questions. Knowledge compounds. Every answer you save today becomes context for tomorrow.
-
----
-
 ## 核心区别 | Core Difference
 
 ## 核心区别 | Core Difference
