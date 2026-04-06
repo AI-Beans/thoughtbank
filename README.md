@@ -77,13 +77,15 @@ opencode
 
 ### 调用 LLM Wiki Skill
 
-OpenCode 有内置的 `/llm-wiki` skill，可以直接使用：
+如果已安装 `/llm-wiki` skill，可以直接使用：
 
 ```
 /llm-wiki
 ```
 
 会返回 skill 指引，帮助你执行 ingest/query/lint 操作。
+
+> **提示**：如果 `/llm-wiki` 不可用，AGENTS.md 已经包含完整的工作流程规范，AI 仍会遵循。
 
 ### 工作模式
 
