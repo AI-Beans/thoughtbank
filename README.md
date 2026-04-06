@@ -3,7 +3,7 @@
 > 把知识编译成持续存在的中间层，而不是每次提问时临时检索。
 > Compile knowledge into a persistent middle layer — don't rediscover it on every query.
 
-**ThoughtBank** — 基于 [Karpathy LLM Wiki](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) 理念的 AI 驱动个人知识库。把知识编译成持续存在的中间层，让 LLM 代替你完成整理、关联、复盘的工作。知识不复利，每一次问答都在为未来积累。
+**ThoughtBank** — 基于 [Karpathy LLM Wiki](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) 理念的 AI 驱动个人知识库。把知识编译成持续存在的中间层，让 LLM 代替你完成整理、关联、复盘的工作。知识复利，每一次问答都在为未来积累。
 
 > ThoughtBank is an AI-powered personal knowledge base built on Karpathy's LLM Wiki concept. Instead of rediscovering knowledge on every query, it compiles insights into a persistent middle layer that grows over time. LLM handles all the bookkeeping — structuring, cross-referencing, and maintenance — while you focus on what matters: asking the right questions. Knowledge compounds. Every answer you save today becomes context for tomorrow.
 
@@ -80,9 +80,9 @@ cd thoughtbank
 
 ## 为什么需要 ThoughtBank？| Why ThoughtBank?
 
-1. **知识不复利** — 传统 RAG 每次重新发现，ThoughtBank 让知识持续积累
+1. **知识复利** — 传统 RAG 每次重新发现，ThoughtBank 让知识持续积累，每次回答都为未来复利
 2. **LLM 维护** — 不需要人工整理，LLM 负责所有 bookkeeping
-3. **默会知识外化** — 那些无法被规则捕获的判断瞬间，记录下来
+3. **默会知识外化** — Polanyi 说"我们知道的多于能表达的"，那些无法被规则捕获的判断瞬间，记录下来成为可传承的知识
 4. **可追溯** — 每个声明注明来源，矛盾可自查
 
 ---
