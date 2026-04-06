@@ -60,9 +60,7 @@ ThoughtBank 可以在 OpenCode 中开箱即用，AGENTS.md 会被自动读取。
 ```
 cd your-thoughtbank
 opencode
-# 新会话开始时，告诉 AI：
-# "请先阅读 AGENTS.md，了解这个知识库的工作流程"
-# AI 会自动加载 schema，之后所有操作都遵循规范
+# AI 自动读取 AGENTS.md，所有操作遵循规范
 ```
 
 ### 核心操作指令
