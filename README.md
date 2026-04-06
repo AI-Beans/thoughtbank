@@ -22,11 +22,14 @@
 ## 工作流 | Workflow
 
 ```
-RAW ──► INGEST ──► WIKI ──► QUERY ──► FILE BACK ──► LINT
-              │                           │
+┌─────────────────────────────────────────────────────────────┐
+│  WEB ──► RAW ──► INGEST ──► WIKI ──► QUERY ──► FILE BACK │
+└─────────────────────────────────────────────────────────────┘
+              │              │                    │
               └── 分析 ──► 整理 ──► 记录 ─────┘
 ```
 
+- **WEB** — agent-browser 自动抓取网页到 raw/（可选）
 - **RAW** — 源素材放入（永不可变）
 - **INGEST** — 分析内容 → 创建/更新 wiki 页面 → 记录 log
 - **WIKI** — LLM 维护的结构化知识层
@@ -99,6 +102,29 @@ AI:  ✓ 读取 wiki/index.md 定位相关页面
      ✓ 有价值的内容自动存到 outputs/
 ```
 
+### 自动抓取网页 | Automated Web Collection
+
+**agent-browser** — Vercel Labs 发布的 AI 浏览器操控工具，让 AI 直接抓取任意网页。
+
+```bash
+# 安装（两条命令）
+npm install -g agent-browser
+npx agent-browser install
+
+# AI 抓取网页示例
+你: "把这个 URL 抓下来存到 raw/：https://example.com/article"
+AI:  agent-browser open https://example.com/article
+     agent-browser get text "article"
+     # AI 打开页面，抓取文本，保存到 raw/
+```
+
+**优势**：
+- 告别手动复制粘贴
+- 处理 JS 动态加载、需登录、交互式图表的页面
+- 比 Playwright MCP 省 **82% token**，同样对话可抓 5-6 倍页面
+
+**适用场景**：竞品文章、热门话题、研究文档、社交媒体讨论、任何 AI 需要但你懒得手动保存的内容。
+
 ---
 
 ## 快速开始 | Quick Start
@@ -111,8 +137,12 @@ cd thoughtbank
 # 2. Configure
 # 编辑 AGENTS.md，填入你的主题和兴趣点
 
-# 3. Start
-# 将素材放入 raw/，告诉 AI："处理 raw/ 中的内容"
+# 3. (可选) 安装 agent-browser
+npm install -g agent-browser
+npx agent-browser install
+
+# 4. Start
+# 告诉 AI："处理 raw/ 中的内容" 或 "把这个 URL 抓下来存到 raw/"
 # AI 自动完成 ingest → wiki → index → log 全流程
 ```
 
@@ -140,6 +170,8 @@ cd thoughtbank
 ## 参考资料 | References
 
 - [Karpathy LLM Wiki](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f)
+- [agent-browser by Vercel Labs](https://github.com/vercel/agent-browser)
+- [Nick Spisak - LLM Wiki Workflow](https://x.com/NickSpisak_/status/2040448463540830705)
 - [Polanyi Tacit Knowledge](https://en.wikipedia.org/wiki/Tacit_knowledge)
 - [Vanevar Bush - As We May Think (1945)](https://www.theatlantic.com/magazine/archive/1945/07/as-we-may-think/303881/)
 
