@@ -47,11 +47,34 @@
 └─────────────────────────────────────────┘
 ```
 
+## 自动抓取网页（agent-browser）
+
+**agent-browser**（Vercel Labs）— AI 浏览器操控工具，让 AI 直接抓取任意网页内容到 `raw/`。
+
+```bash
+# 安装
+npm install -g agent-browser
+npx agent-browser install
+
+# 使用示例
+你: "把这个 URL 抓下来存到 raw/：https://example.com/article"
+AI:  agent-browser open https://example.com/article
+     agent-browser get text "article"
+     # AI 打开页面，抓取文本，保存到 raw/
+```
+
+**优势**：
+- 告别手动复制粘贴
+- 处理 JS 动态加载、需登录、交互式图表的页面
+- 比 Playwright MCP 省 **82% token**
+
+**适用场景**：竞品文章、热门话题、研究文档、社交媒体讨论。
+
 ## Ingest 规范
 
 ### 执行步骤
 
-1. 将源文件放入 `raw/`
+1. 将源文件放入 `raw/`（手动放入 / agent-browser 抓取 / 复制粘贴）
 2. LLM 分析内容（**要读源码，不只是文件名**）
 3. 识别主题，归纳到已有页面或新建页面
 4. 更新相关页面的链接关系
@@ -200,6 +223,13 @@ Append-only，每次 ingest/query/lint 都记录：
 | 把公司项目当独立项目 | 读源码 | 从代码注释提取公司名 |
 | 时间线混乱 | 追问确认 | 明确并存 vs 先后 |
 | 主题边界不清 | 自问"能一句话说清吗" | 拆分或合并 |
+
+## 参考资料
+
+- [Karpathy LLM Wiki](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) — 核心理念来源：把知识编译成持久中间层
+- [Polanyi - Tacit Knowledge](https://en.wikipedia.org/wiki/Tacit_knowledge) — 默会知识理论："我们知道的多于能表达的"
+- [Vannevar Bush - As We May Think (1945)](https://www.theatlantic.com/magazine/archive/1945/07/as-we-may-think/303881/) — 知识关联与 memex 思想源头
+- [agent-browser by Vercel Labs](https://github.com/vercel/agent-browser) — AI 浏览器操控，自动抓取网页到 raw/
 
 ---
 最后更新：2026-04-06
