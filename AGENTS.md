@@ -250,6 +250,29 @@ Append-only，每次 ingest/query/lint 都记录：
 3. 在 AGENTS.md 中声明集成流程
 4. 实践验证后开源贡献
 
+### Skill 设计三法则（harness-init 实战验证）
+
+**发现场景**: harness-init skill 首次实战（ai-classroom 项目），AGENTS.md 驱动 OmC 生成了 281 行完整实施计划。
+
+**法则 1: 结构即引导力** — AGENTS.md 的路径映射表 + docs/ 目录结构本身就是最大的引导力。不需要写长篇使用说明，Agent 读到结构就知道该做什么。
+
+**法则 2: 模板是起点不是约束** — Agent 自主扩展了 3 处（加了 2 条领域信念、域模型图、从 2 阶段扩展到 3 阶段）。好的模板给框架 + 留白，不需要穷举所有可能。
+
+**法则 3: 播种不包收** — Skill 的价值在于初始化（播种），之后的生长是 Agent 框架的能力。openspec/ 管"做什么"和 .sisyphus/ 管"怎么做"自然共存，零冲突。
+
+### 聚合生态集成经验（skills.sh + npx skills）
+
+**发现场景**: 将 harness-init 发布到 skills.sh 生态（Vercel Labs 的 Agent Skill 包管理器）。
+
+**关键发现**:
+- `npx skills add <owner/repo>` 递归扫描仓库中所有 `SKILL.md`，找到就安装
+- 只要求 SKILL.md 有 YAML frontmatter（`name` + `description`），同目录下文件自动 copy
+- 支持 40+ Agent（OpenCode、Claude Code、Cursor、Copilot、Gemini 等）
+- 安装到 canonical 位置 `~/.agents/skills/`，自动 symlink 到各 Agent 目录
+- 不需要改仓库结构，任何已有 SKILL.md 的仓库天然兼容
+
+**实践真知**: 发布 skill 到 skills.sh 零成本——只要仓库里有合规的 SKILL.md，`npx skills add` 就能工作。
+
 ## 参考资料
 
 - [Karpathy LLM Wiki](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) — 核心理念来源：把知识编译成持久中间层
@@ -258,4 +281,4 @@ Append-only，每次 ingest/query/lint 都记录：
 - [agent-browser by Vercel Labs](https://github.com/vercel/agent-browser) — AI 浏览器操控，自动抓取网页到 raw/
 
 ---
-最后更新：2026-04-06
+最后更新：2026-04-07
