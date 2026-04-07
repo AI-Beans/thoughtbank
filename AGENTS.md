@@ -203,75 +203,7 @@ Append-only，每次 ingest/query/lint 都记录：
 
 ## 经验沉淀
 
-### 来源标注规范
-
-```markdown
-来源: raw/目录名/文件名.扩展名
-```
-
-### 默会知识外化
-
-发现无法被规则捕获的判断瞬间时：
-- 记录下来
-- 存入 outputs/
-- 最终沉淀到方法论
-
-### 常见错误与修正
-
-| 错误 | 发现方法 | 修正 |
-|---|---|---|
-| 把公司项目当独立项目 | 读源码 | 从代码注释提取公司名 |
-| 时间线混乱 | 追问确认 | 明确并存 vs 先后 |
-| 主题边界不清 | 自问"能一句话说清吗" | 拆分或合并 |
-
-### 深度 Lint 实践（raw/ 漏读防范）
-
-| 错误 | 发现方法 | 修正 |
-|---|---|---|
-| node_modules 污染统计 | 发现 8516 文件中数千个是依赖 | 排除 node_modules、.dll、.exe、.cache |
-| 深层目录漏读 | 对比目录数 vs 实际读取数 | 对 Level 2+ 做针对性深度 ingest |
-| 散文件未分类 | Level 1 有 60 个无目录文件 | 按日期/类型分组或关联到已有页面 |
-
-### 降维打击策略（大型工具用于小型项目）
-
-**经验法则**：用企业级工具做独立项目可以降维打击，但必须取精华不全搬。
-
-| 取 | 不取 | 原因 |
-|---|---|---|
-| 项目宪法 | 完整六阶段流水线 | 宪法一次写好永久生效，流水线太重 |
-| Phase Gates | Library-First 原则 | 关键变更前自检有价值，强制库化不适合原型 |
-| 规范持久化 | CLI Interface Mandate | 需求可追溯有价值，强制 CLI 接口过度约束 |
-
-### 工具桥接方法论
-
-当两个工具格式兼容但无原生集成时：
-1. 确认格式兼容性（都是 Markdown + checkbox）
-2. 写桥接脚本做格式转换
-3. 在 AGENTS.md 中声明集成流程
-4. 实践验证后开源贡献
-
-### Skill 设计三法则（harness-init 实战验证）
-
-**发现场景**: harness-init skill 首次实战（ai-classroom 项目），AGENTS.md 驱动 OmC 生成了 281 行完整实施计划。
-
-**法则 1: 结构即引导力** — AGENTS.md 的路径映射表 + docs/ 目录结构本身就是最大的引导力。不需要写长篇使用说明，Agent 读到结构就知道该做什么。
-
-**法则 2: 模板是起点不是约束** — Agent 自主扩展了 3 处（加了 2 条领域信念、域模型图、从 2 阶段扩展到 3 阶段）。好的模板给框架 + 留白，不需要穷举所有可能。
-
-**法则 3: 播种不包收** — Skill 的价值在于初始化（播种），之后的生长是 Agent 框架的能力。openspec/ 管"做什么"和 .sisyphus/ 管"怎么做"自然共存，零冲突。
-
-### 聚合生态集成经验（skills.sh + npx skills）
-
-**发现场景**: 将 harness-init 发布到 skills.sh 生态（Vercel Labs 的 Agent Skill 包管理器）。
-
-**关键发现**:
-- `npx skills add <owner/repo>` 递归扫描仓库中所有 `SKILL.md`，找到就安装
-- 只要求 SKILL.md 有 YAML frontmatter（`name` + `description`），同目录下文件自动 copy
-- 支持 40+ Agent（OpenCode、Claude Code、Cursor、Copilot、Gemini 等）
-- 安装到 canonical 位置 `~/.agents/skills/`，自动 symlink 到各 Agent 目录
-- 不需要改仓库结构，任何已有 SKILL.md 的仓库天然兼容
-
-**实践真知**: 发布 skill 到 skills.sh 零成本——只要仓库里有合规的 SKILL.md，`npx skills add` 就能工作。
+深度阅读: [`wiki/经验沉淀.md`](wiki/经验沉淀.md) — 实战积累的通用方法论（降维打击、工具桥接等）
 
 ## 参考资料
 
