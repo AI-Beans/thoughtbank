@@ -201,10 +201,6 @@ Append-only，每次 ingest/query/lint 都记录：
 - 简报/报告（存入 outputs/，命名：`YYYY-MM-DD-主题分析.md`）
 - Marp 幻灯片
 
-## 经验沉淀
-
-深度阅读: [`wiki/经验沉淀.md`](wiki/经验沉淀.md) — 实战积累的通用方法论（降维打击、工具桥接等）
-
 ## 参考资料
 
 - [Karpathy LLM Wiki](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) — 核心理念来源：把知识编译成持久中间层

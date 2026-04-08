@@ -6,7 +6,7 @@
 
 ## Concepts / 概念
 
-[在这里添加概念页面]
+- [[ThoughtBank]] — 社区维护的通用知识库模板
 
 ## History / 历史
 
